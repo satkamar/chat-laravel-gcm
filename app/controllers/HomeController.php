@@ -149,7 +149,7 @@ class HomeController extends BaseController {
 					    {
 					    	
 						    // Replace with the real server API key from Google APIs
-						    $apiKey = "AIzaSyA1x85KkK0JARtm4hB_bzoFTkV79-CsezU";
+						    $apiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 
 						    // Replace with the real client registration IDs
 						    $registrationIDs = $userInfo[0]->gcm_id;
@@ -279,99 +279,87 @@ class HomeController extends BaseController {
 //file upload
 
 public function uploadImage(){
-		try{
-			if($_SERVER['REQUEST_METHOD'] == "POST")
-			{
-				if(!empty($_FILES)){
-					$bucketName='wisencrazy';
-				$tempPath = $_FILES[ 'file' ][ 'tmp_name' ];
-			    $imageKey= strtotime(date('Y-m-d H:i:s')).$_FILES[ 'file' ][ 'name' ];
-				$s3 = AWS::get('s3');
-				$s3->putObject(array(
-				    'Bucket'     => $bucketName,
-				    'Key'        =>$imageKey ,
-				    'SourceFile' => $tempPath,
-				    'ACL'    => 'public-read'
-				));
+	try{
+		if($_SERVER['REQUEST_METHOD'] == "POST")
+		{
+			if(!empty($_FILES)){
+				$bucketName='wisencrazy';
+			$tempPath = $_FILES[ 'file' ][ 'tmp_name' ];
+			$imageKey= strtotime(date('Y-m-d H:i:s')).$_FILES[ 'file' ][ 'name' ];
+			$s3 = AWS::get('s3');
+			$s3->putObject(array(
+				'Bucket'     => $bucketName,
+				'Key'        =>$imageKey ,
+				'SourceFile' => $tempPath,
+				'ACL'    => 'public-read'
+			));
 
-				/*$request=$s3->getObject(array(
-	   			      		'Bucket' => $bucketName, 
-	   			      		'Key' => $imageKey
-				 ));*/
+			/*$request=$s3->getObject(array(
+						'Bucket' => $bucketName, 
+						'Key' => $imageKey
+				));*/
 
-				$this->httpResponse["content"] = array("successMessage"=>"https://s3-ap-southeast-1.amazonaws.com/wisencrazy/".$imageKey, "developerMessage"=>"FILE_UPLOADED");
-				$this->httpResponse["statusCode"] = 200;
-				}else{
-					$this->httpResponse["content"] = array("errorMessage"=>"Invalid file uploaded", "developerMessage"=>"FILE_INVALID");
-					$this->httpResponse["statusCode"] = 417;
-				}
-				
+			$this->httpResponse["content"] = array("successMessage"=>"https://s3-ap-southeast-1.amazonaws.com/wisencrazy/".$imageKey, "developerMessage"=>"FILE_UPLOADED");
+			$this->httpResponse["statusCode"] = 200;
 			}else{
-				$this->httpResponse["content"] = array("errorMessage"=>"Method not allowed", "developerMessage"=>"METHOD_TYPE_INVALID");
-				$this->httpResponse["statusCode"] = 406;
+				$this->httpResponse["content"] = array("errorMessage"=>"Invalid file uploaded", "developerMessage"=>"FILE_INVALID");
+				$this->httpResponse["statusCode"] = 417;
 			}
 			
+		}else{
+			$this->httpResponse["content"] = array("errorMessage"=>"Method not allowed", "developerMessage"=>"METHOD_TYPE_INVALID");
+			$this->httpResponse["statusCode"] = 406;
 		}
-		 catch(Exception $e)
-	    {
-			DB::rollback();
-			$this->httpResponse["content"] = array("errorMessage"=>"Internal error", "developerMessage"=>$e->getMessage());
-			$this->httpResponse["statusCode"] = 500;
-	    }
-	    return Response::make(json_encode($this->httpResponse["content"]), $this->httpResponse["statusCode"]);
-	
+		
 	}
+		catch(Exception $e)
+	{
+		DB::rollback();
+		$this->httpResponse["content"] = array("errorMessage"=>"Internal error", "developerMessage"=>$e->getMessage());
+		$this->httpResponse["statusCode"] = 500;
+	}
+	return Response::make(json_encode($this->httpResponse["content"]), $this->httpResponse["statusCode"]);
+}
 
 public function uploadImageForAndroid(){
-                try{
-			 if(!empty($_REQUEST['image']))
-                        {
-                               // if(!empty($_POST['filename'])){
-					// Decode Image
-					$binary=base64_decode($_REQUEST['image']);
-                                        $fileName=$_REQUEST['filename'];
-					header('Content-Type:image/jpeg; charset=utf-8');
-                                        $bucketName='wisencrazy';
-        	                        //$tempPath = $_FILES[ 'file' ][ 'tmp_name' ];
-	        	                $imageKey= strtotime(date('Y-m-d H:i:s'));//.$_POST['filename'];
-					$finalName=$imageKey.$fileName;
-                                $s3 = AWS::get('s3');
-                               $result= $s3->putObject(array(
-                                    'Bucket'     => $bucketName,
-                                    'Key'        =>$finalName,
-                                   'Body' => $binary,
-				    'ContentType'=>'image/'.pathinfo($fileName, PATHINFO_EXTENSION),
-                                    'ACL'    => 'public-read'
-                                ));
+    try{
+		if(!empty($_REQUEST['image']))
+		{
+			// if(!empty($_POST['filename'])){
+			// Decode Image
+			$binary=base64_decode($_REQUEST['image']);
+			$fileName=$_REQUEST['filename'];
+			header('Content-Type:image/jpeg; charset=utf-8');
+			$bucketName='wisencrazy';
+			//$tempPath = $_FILES[ 'file' ][ 'tmp_name' ];
+			$imageKey= strtotime(date('Y-m-d H:i:s'));//.$_POST['filename'];
+			$finalName=$imageKey.$fileName;
+			$s3 = AWS::get('s3');
+			$result= $s3->putObject(array(
+				'Bucket'     => $bucketName,
+				'Key'        =>$finalName,
+				'Body' => $binary,
+				'ContentType'=>'image/'.pathinfo($fileName, PATHINFO_EXTENSION),
+				'ACL'    => 'public-read'
+			));
 
-                                /*$request=$s3->getObject(array(
-                                                'Bucket' => $bucketName, 
-                                                'Key' => $imageKey
-                                 ));*/
-				
-                                $this->httpResponse["content"] = array("successMessage"=>$result["ObjectURL"], "developerMessage"=>"FILE_UPLOADED");
-                                $this->httpResponse["statusCode"] = 200;
-                               // }else{
-                                 //       $this->httpResponse["content"] = array("errorMessage"=>"Invalid file named", "developerMessage"=>"FILE_NAME_INVALID");
-                                 //       $this->httpResponse["statusCode"] = 417;
-                               // }
+			$this->httpResponse["content"] = array("successMessage"=>$result["ObjectURL"], "developerMessage"=>"FILE_UPLOADED");
+			$this->httpResponse["statusCode"] = 200;
+		
+		}else{
+				$this->httpResponse["content"] = array("errorMessage"=>"Invalid file uploaded", "developerMessage"=>"INVALID_FILE");
+				$this->httpResponse["statusCode"] = 406;
+		}
+	}
+	catch(Exception $e)
+	{
+		DB::rollback();
+		$this->httpResponse["content"] = array("errorMessage"=>"Internal error", "developerMessage"=>$e->getMessage());
+		$this->httpResponse["statusCode"] = 500;
+	}
+	return Response::make(json_encode($this->httpResponse["content"]), $this->httpResponse["statusCode"]);
 
-                        }else{
-                                $this->httpResponse["content"] = array("errorMessage"=>"Invalid file uploaded", "developerMessage"=>"INVALID_FILE");
-                                $this->httpResponse["statusCode"] = 406;
-                        }
-
-                }
-
-		  catch(Exception $e)
-        	    {
-                        DB::rollback();
-                        $this->httpResponse["content"] = array("errorMessage"=>"Internal error", "developerMessage"=>$e->getMessage());
-                        $this->httpResponse["statusCode"] = 500;
-	            }
-            return Response::make(json_encode($this->httpResponse["content"]), $this->httpResponse["statusCode"]);
-
-        }
+}
 
 
 

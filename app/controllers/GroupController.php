@@ -85,7 +85,7 @@ class GroupController extends BaseController {
 				if(!empty($checkUser)){
 					DB::table('group_members')->insertGetId(array("user_id"=>$checkUser[0]->id,"group_id"=>$groupId,"added_by"=>$addedBy,"role"=>"user","status"=>"unmute","created_on"=>$this->NOW(),"sid"=>$this->getSid()));
 				    // Replace with the real server API key from Google APIs
-				    $apiKey = "AIzaSyA1x85KkK0JARtm4hB_bzoFTkV79-CsezU";
+				    $apiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 				    // Replace with the real client registration IDs
 				    $registrationIDs = $checkUser[0]->gcm_id;
 				    $registrationIDs;
@@ -218,7 +218,7 @@ class GroupController extends BaseController {
 			for($i=0;$i<count($group);$i++){
 					
 				    // Replace with the real server API key from Google APIs
-				    $apiKey = "AIzaSyA1x85KkK0JARtm4hB_bzoFTkV79-CsezU";
+				    $apiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 				    // Replace with the real client registration IDs
 				    $registrationIDs = $group[$i]->gcm_id;
 				    // Message to be sent
@@ -329,7 +329,7 @@ class GroupController extends BaseController {
 								if(count($userInfo)>0)
 								{
 									// Replace with the real server API key from Google APIs
-									$apiKey = "AIzaSyA1x85KkK0JARtm4hB_bzoFTkV79-CsezU";
+									$apiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-CsezU";
 
 									// Replace with the real client registration IDs
 									$registrationIDs = $gcmIds;
